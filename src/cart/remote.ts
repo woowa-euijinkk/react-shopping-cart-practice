@@ -35,5 +35,5 @@ export function useGetCartItems() {
     getData();
   }, []);
 
-  return data;
+  return data ?? [];
 }

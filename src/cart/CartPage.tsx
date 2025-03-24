@@ -1,31 +1,20 @@
 import { Fragment } from "react";
 import { CartItemType, useGetCartItems } from "./remote";
+import { useCheckedCartItemIds } from "./useCheckedCartItemIds";
 
 export default function CartPage() {
   return (
     <>
-      <Title />
       <CartItemsSection />
+      <BottomCTA />
     </>
   );
 }
 
-function Title() {
+function BottomCTA() {
   // TODO:
-  const cartItemsLength = useGetCartItems()?.length;
-
-  if (cartItemsLength == null) {
-    return null;
-  }
-
-  return (
-    <div>
-      <h2>장바구니</h2>
-      {cartItemsLength > 0 && (
-        <h3>{`현재 ${cartItemsLength}종류의 상품이 담겨있습니다.`}</h3>
-      )}
-    </div>
-  );
+  const hasSelectedItems = false;
+  return <button disabled={hasSelectedItems}>주문확인</button>;
 }
 
 function CartItemsSection() {
@@ -42,8 +31,11 @@ function AllSelectButton() {
 }
 
 function CartItems() {
-  // TODO:
   const cartItems = useGetCartItems();
+  // TODO:
+  const [checkedCartItemIds, setCheckedCartItemIds] = useCheckedCartItemIds({
+    cartItems,
+  });
 
   if (cartItems == null) {
     return null;
@@ -54,7 +46,16 @@ function CartItems() {
       {cartItems.map((cartItem) => {
         return (
           <Fragment key={cartItem.id}>
-            <CartItem cartItem={cartItem} />
+            <CartItem
+              cartItem={cartItem}
+              checked={checkedCartItemIds[cartItem.id]}
+              onCheck={() => {
+                setCheckedCartItemIds((prev) => ({
+                  ...prev,
+                  [cartItem.id]: !prev[cartItem.id],
+                }));
+              }}
+            />
           </Fragment>
         );
       })}
@@ -62,6 +63,20 @@ function CartItems() {
   );
 }
 
-function CartItem({ cartItem }: { cartItem: CartItemType }) {
-  return <div>{cartItem.id}</div>;
+function CartItem({
+  cartItem,
+  checked,
+  onCheck,
+}: {
+  cartItem: CartItemType;
+  checked: boolean;
+  onCheck: () => void;
+}) {
+  return (
+    <>
+      <div>{cartItem.id}</div>
+      <div>{String(checked)}</div>
+      <button onClick={onCheck}>toggle button</button>
+    </>
+  );
 }
