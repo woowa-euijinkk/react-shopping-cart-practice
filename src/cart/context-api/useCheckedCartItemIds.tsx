@@ -6,7 +6,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { CartItemType, useGetCartItems } from "./remote";
+import { CartItemType } from "./remote";
 
 export function useCheckedCartItemIds({
   cartItems,
@@ -41,8 +41,10 @@ const CheckedCartItemIds = createContext<{
   >;
 } | null>(null);
 
-export function CheckedCartItemIdsProvider({ children }: PropsWithChildren) {
-  const cartItems = useGetCartItems();
+export function CheckedCartItemIdsProvider({
+  cartItems,
+  children,
+}: PropsWithChildren<{ cartItems: CartItemType[] }>) {
   const [checkedCartItemIds, setCheckedCartItemIds] = useCheckedCartItemIds({
     cartItems,
   });

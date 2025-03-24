@@ -6,8 +6,9 @@ import {
 } from "./useCheckedCartItemIds";
 
 export default function CartPage() {
+  const cartItems = useGetCartItems();
   return (
-    <CheckedCartItemIdsProvider>
+    <CheckedCartItemIdsProvider cartItems={cartItems}>
       <CartItemsSection />
       <BottomCTA />
     </CheckedCartItemIdsProvider>
@@ -15,8 +16,8 @@ export default function CartPage() {
 }
 
 function BottomCTA() {
-  const checkedIds = useCheckedCartItemIdsContext();
-  const hasSelectedItems = Object.values(checkedIds).some((c) => c);
+  const { checkedCartItemIds } = useCheckedCartItemIdsContext();
+  const hasSelectedItems = Object.values(checkedCartItemIds).some((c) => c);
   return <button disabled={hasSelectedItems}>주문확인</button>;
 }
 
