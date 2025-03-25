@@ -76,7 +76,7 @@ function CartItem({
     <>
       <div>{cartItem.id}</div>
       <div>{String(checked)}</div>
-      <button onClick={onCheck}>toggle button</button>
+      <button onClick={onCheck}>check button</button>
     </>
   );
 }
