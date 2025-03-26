@@ -13,7 +13,6 @@ export default function CartPage() {
 
 function BottomCTA() {
   // TODO:
-  // const hasSelectedItems = Object.values(checkedIds).some((checked) => checked);
   const hasSelectedItems = false;
 
   return <button disabled={hasSelectedItems}>주문확인</button>;
