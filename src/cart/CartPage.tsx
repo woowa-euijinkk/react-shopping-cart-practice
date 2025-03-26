@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import { CartItemType, useGetCartItems } from "./remote";
-import { useCheckedCartItemIds } from "./useCheckedCartItemIds";
+import { useCheckedIds } from "./useCheckedIds";
 
 export default function CartPage() {
   return (
@@ -13,7 +13,9 @@ export default function CartPage() {
 
 function BottomCTA() {
   // TODO:
+  // const hasSelectedItems = Object.values(checkedIds).some((checked) => checked);
   const hasSelectedItems = false;
+
   return <button disabled={hasSelectedItems}>주문확인</button>;
 }
 
@@ -33,7 +35,7 @@ function AllSelectButton() {
 function CartItems() {
   const cartItems = useGetCartItems();
   // TODO:
-  const [checkedCartItemIds, setCheckedCartItemIds] = useCheckedCartItemIds({
+  const [checkedIds, setCheckedIds] = useCheckedIds({
     cartItems,
   });
 
@@ -48,9 +50,9 @@ function CartItems() {
           <Fragment key={cartItem.id}>
             <CartItem
               cartItem={cartItem}
-              checked={checkedCartItemIds[cartItem.id]}
+              checked={checkedIds[cartItem.id]}
               onCheck={() => {
-                setCheckedCartItemIds((prev) => ({
+                setCheckedIds((prev) => ({
                   ...prev,
                   [cartItem.id]: !prev[cartItem.id],
                 }));
