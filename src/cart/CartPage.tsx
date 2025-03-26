@@ -1,43 +1,103 @@
-import { Fragment } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { CartItemType, useGetCartItems } from "./remote";
-import { useCheckedIds } from "./useCheckedIds";
 
 export default function CartPage() {
+  const cartItems = useGetCartItems();
+  const [checkedIds, setCheckedIds] = useState<Record<number, boolean>>({});
+
+  useEffect(() => {
+    if (cartItems.length > 0 && Object.keys(checkedIds).length === 0) {
+      setCheckedIds(
+        cartItems.reduce<Record<number, boolean>>((acc, curr) => {
+          acc[curr.id] = true;
+          return acc;
+        }, {})
+      );
+    }
+  }, [cartItems, checkedIds]);
+
   return (
     <>
-      <CartItemsSection />
-      <BottomCTA />
+      <CartItemsSection
+        cartItems={cartItems}
+        checkedIds={checkedIds}
+        setCheckedIds={setCheckedIds}
+      />
+      <BottomCTA checkedIds={checkedIds} />
     </>
   );
 }
 
-function BottomCTA() {
-  // TODO:
-  const hasSelectedItems = false;
+function BottomCTA({ checkedIds }: { checkedIds: Record<number, boolean> }) {
+  const hasSelectedItems = Object.values(checkedIds).some(
+    (isChecked) => isChecked
+  );
 
-  return <button disabled={hasSelectedItems}>주문확인</button>;
+  return <button disabled={!hasSelectedItems}>주문확인</button>;
 }
 
-function CartItemsSection() {
+function CartItemsSection({
+  cartItems,
+  checkedIds,
+  setCheckedIds,
+}: {
+  cartItems: CartItemType[];
+  checkedIds: Record<number, boolean>;
+  setCheckedIds: React.Dispatch<React.SetStateAction<Record<number, boolean>>>;
+}) {
   return (
     <div>
-      <AllSelectButton />
-      <CartItems />
+      <AllSelectButton
+        cartItems={cartItems}
+        checkedIds={checkedIds}
+        setCheckedIds={setCheckedIds}
+      />
+      <CartItems
+        cartItems={cartItems}
+        checkedIds={checkedIds}
+        setCheckedIds={setCheckedIds}
+      />
     </div>
   );
 }
 
-function AllSelectButton() {
-  return <div>AllSelectButton</div>;
+function AllSelectButton({
+  cartItems,
+  checkedIds,
+  setCheckedIds,
+}: {
+  cartItems: CartItemType[];
+  checkedIds: Record<number, boolean>;
+  setCheckedIds: React.Dispatch<React.SetStateAction<Record<number, boolean>>>;
+}) {
+  const allSelected = cartItems.every((item) => checkedIds[item.id]);
+
+  const toggleAll = () => {
+    const newCheckedState = !allSelected;
+    setCheckedIds(
+      cartItems.reduce<Record<number, boolean>>((acc, item) => {
+        acc[item.id] = newCheckedState;
+        return acc;
+      }, {})
+    );
+  };
+
+  return (
+    <button onClick={toggleAll}>
+      {allSelected ? "전체 해제" : "전체 선택"}
+    </button>
+  );
 }
 
-function CartItems() {
-  const cartItems = useGetCartItems();
-  // TODO:
-  const [checkedIds, setCheckedIds] = useCheckedIds({
-    cartItems,
-  });
-
+function CartItems({
+  cartItems,
+  checkedIds,
+  setCheckedIds,
+}: {
+  cartItems: CartItemType[];
+  checkedIds: Record<number, boolean>;
+  setCheckedIds: React.Dispatch<React.SetStateAction<Record<number, boolean>>>;
+}) {
   if (cartItems == null) {
     return null;
   }
